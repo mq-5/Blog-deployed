@@ -1,6 +1,8 @@
 import os
+import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_admin import Admin
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -23,8 +25,9 @@ POSTGRES = {
     'host': 'localhost',
     'port': 5432,
 }
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:%(pw)s@%(host)s:\
-# %(port)s/%(db)s' % POSTGRES
+'''
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://quyen:123@localhost:5432/blog'
+'''
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
@@ -33,6 +36,8 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
+app.config['FLASK_ADMIN_SWATCH'] = 'superhero'
+admin = Admin(app, name='microblog', template_mode='bootstrap3')
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -118,6 +123,11 @@ class Flags(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
+class UserVisits(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    
+
 db.create_all()
 
 # Forms ===========================================================
@@ -169,8 +179,19 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+def send_simple_message():
+	return requests.post(
+		"https://api.mailgun.net/v3/sandbox0bfc0bbfa16043fab12dda3a391f74dd.mailgun.org/messages",
+		auth=("api", "bac57319741aa8659f9c76a8514b9344-c27bf672-7c55c135"),
+		data={"from": "Excited User <mailgun@sandbox0bfc0bbfa16043fab12dda3a391f74dd.mailgun.org>",
+			"to": ["thaikhoamyquyen@gmail.com", "YOU@sandbox0bfc0bbfa16043fab12dda3a391f74dd.mailgun.org"],
+			"subject": "Mailgun Update",
+			"text": "Ten more visits to your site!"})
+
+
 @app.route("/")
 def home():
+    send_simple_message()
     return render_template("layout.html")
 
 
@@ -358,7 +379,6 @@ def upload():
 @app.route('/posts/<id>/like', methods=['POST', 'GET'])
 @login_required
 def like(id):
-    ref = request.args.get('ref')
     try:
         post = Post.query.filter_by(id=id).one()
         if not current_user.has_upvote(post):
@@ -374,13 +394,12 @@ def like(id):
         db.session.commit()
     except:
         flash("Post not found", 'danger')
-    return redirect(ref)
+    return redirect(request.referrer)
 
 
 @app.route('/posts/<id>/dislike', methods=['POST', 'GET'])
 @login_required
 def dislike(id):
-    ref = request.args.get('ref')
     try:
         post = Post.query.filter_by(id=id).one()
         if not current_user.has_downvote(post):
@@ -396,13 +415,12 @@ def dislike(id):
         db.session.commit()
     except:
         flash('Post not found', 'danger')
-    return redirect(ref)
+    return redirect(request.referrer)
 
 
 @app.route('/posts/<id>/flag')
 @login_required
 def flag(id):
-    ref = request.args.get("ref")
     post = Post.query.filter_by(id=id).first()
     if post and not current_user.has_flag(post):
         new_flag = Flags(post_id=id)
@@ -413,7 +431,7 @@ def flag(id):
         db.session.delete(flag)
         flash('You have removed a flag')
     db.session.commit()
-    return redirect(ref)
+    return redirect(request.referrer)
 
 
 @app.route('/user/<id>/follow', methods=['POST', 'GET'])
