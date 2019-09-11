@@ -19,9 +19,9 @@
           </small></a>
         <small class="font-italic">
           {{'updated '+ "{:%Y-%m-%d %H:%M}".format(post.updated_on) or 'created ' +"{:%Y-%m-%d %H:%M}".format(post.created_on)}}</small>
+        {% if current_user.is_authenticated %}
         <hr />
         <div>
-
           <a href="{{ url_for('like', id=post.id) }}" class=" like card-link ">
             <i class="fa fa-thumbs{{'' if current_user.has_upvote(post) else '-o'}}-up purple" aria-hidden="true"
               style="font-size: large"></i>
@@ -37,6 +37,7 @@
             <i class="fa fa-flag{{'' if current_user.has_flag(post) else '-o'}}" aria-hidden="true">
               {{ post.flags|length }}</i></a>
         </div>
+        {% endif %}
       </div>
     </div>
   </li>

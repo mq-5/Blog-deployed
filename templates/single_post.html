@@ -13,6 +13,7 @@
     <p class="mt-3 ">
       {{ post.body | safe }}
     </p>
+    {% if current_user.is_authenticated %}
     <hr />
     <a href="{{ url_for('like', id=post.id) }}" class=" like card-link">
       <i class="fa fa-thumbs{{'' if current_user.has_upvote(post) else '-o'}}-up purple" aria-hidden="true"
@@ -56,6 +57,7 @@
         {{ comment_form.submit(class_="btn btn-outline-light") }}
       </form>
     </ul>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

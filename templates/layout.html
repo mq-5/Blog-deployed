@@ -13,11 +13,52 @@
 </head>
 
 <body>
-  {% include 'includes/_navbar.html' %} {% include 'includes/_flashes.html' %}
-  <div id="content" class="container">
-    {% block content %}
-    <h2 class="header my-5">Hello there!</h2>
-    {% endblock %}
+  {% include 'includes/_navbar.html' %}
+  <div class="container-fluid">
+    <div class="row">
+      {% if current_user.is_authenticated %}
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <h3 class="mb-3"> {{ current_user.user_name}} <i class="fa fa-user-circle mr-2" aria-hidden="true"></i></h3>
+          <ul class="nav flex-column">
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile', id=current_user.id) }}">
+
+                My profile <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('lst', criteria='following') }}">I follow</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('lst', criteria='follower') }}">My followers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href=""> Edit profile </a>
+            </li>
+            {% if current_user.is_admin %}
+            <div class="dropdown-divider"></div>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('flagged') }}"> Flagged Post <span
+                  class="badge badge-success">Admin</span> </a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin"> Monitor <span
+                  class="badge badge-success">Admin</span> </a></li>
+            {% endif %} <br />
+            <li class="nav-item">
+              <a class="btn btn-info ml-3" href="{{ url_for('upload') }}">New Post</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      {% endif %}
+      <div id="content" class="container">
+        {% include 'includes/_flashes.html' %}
+        {% block content %}
+        <h2 class="header my-5">Hello there! Welcome to my blog </h2>
+        <p class="text-center text-muted">{{count}} visits </p>
+        {% endblock %}
+      </div>
+    </div>
   </div>
   <div id="footer" class="text-center my-5">
     {% block footer %} &copy; Copyright 2019 by
@@ -32,6 +73,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
   </script>
-</body>
+
+  <body>
+  </body>
 
 </html>

@@ -1,13 +1,16 @@
 import os
 import requests
 from datetime import datetime
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf import FlaskForm
+
 from wtforms import StringField, PasswordField, SubmitField, ValidationError, TextField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired
 from wtforms.widgets import TextArea
@@ -36,8 +39,9 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
-app.config['FLASK_ADMIN_SWATCH'] = 'superhero'
-admin = Admin(app, name='microblog', template_mode='bootstrap3')
+app.config['FLASK_ADMIN_SWATCH'] = 'simplex'
+admin = Admin(app, name='Admin', template_mode='bootstrap3')
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -127,8 +131,12 @@ class UserVisits(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     
-
 db.create_all()
+
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Post, db.session))
+admin.add_view(ModelView(Comment, db.session))
+
 
 # Forms ===========================================================
 
@@ -191,8 +199,13 @@ def send_simple_message():
 
 @app.route("/")
 def home():
-    send_simple_message()
-    return render_template("layout.html")
+    visit = UserVisits()
+    db.session.add(visit)
+    db.session.commit()
+    count = UserVisits.query.count()
+    if count % 10 == 0:
+        send_simple_message()
+    return render_template("layout.html", count=count)
 
 
 @app.route("/top-bloggers")
