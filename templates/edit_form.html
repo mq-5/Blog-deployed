@@ -1,0 +1,16 @@
+{% extends "layout.html" %} {% block content %}
+
+<h2 class="header">Edit post</h2>
+<form method="POST" class="px-5">
+  {{ form.hidden_tag() }}
+  <div class="form-group">
+    {{ form.title.label }}
+    {{ form.title(class_="form-control", placeholder="Enter title", value=post.title) }}
+  </div>
+  <div class="form-group">
+    {{ form.body.label }}
+    {{ form.body(class_="form-control post-body", rows=5, placeholder=post.body, value=post.body) }}
+  </div>
+  {{ form.submit(class_="btn my-3 btn-lg") }}
+</form>
+{% endblock %}

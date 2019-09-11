@@ -1,0 +1,22 @@
+{% extends "layout.html" %} {% block content %}
+<div class="text-center mb-5">
+  <h1 class="header">This is {{ user.user_name }}</h1>
+  {% if user.id!=current_user.id %}
+  <a class="btn btn-info mb-3"
+    href="{{ url_for('follow', id=user.id) }}">{{ 'Unfollow' if is_followed else 'Follow' }}</a>
+  {% endif %}
+  <p>
+    <span class="mx-3">Followers: {{ followers }}</span>
+    |
+    <span class="mx-3">Followings: {{ followings }}</span>
+  </p>
+  <h5>Email: {{ user.email }}</h5>
+  <h5>User ID: {{ user.id }}</h5>
+  <h5>User name: {{ user.user_name }}</h5>
+  <h5>
+    Posts: <a href=" {{ url_for('user_posts', id=user.id) }}">{{ user.posts.count() }}</a>
+  </h5>
+  <a href="{{ url_for('edit_profile') }}"
+    style="visibility: {{'hidden' if user.id!=current_user.id else 'visible'}}">Edit information</a>
+</div>
+{% endblock %}

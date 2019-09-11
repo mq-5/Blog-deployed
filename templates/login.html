@@ -1,0 +1,14 @@
+{% extends "layout.html" %} {% block content %}
+
+<form class="form-signin text-center" method="POST">
+  {{ form.hidden_tag() }}
+  <h1 class="h3 mb-3 font-weight-normal">Please Sign In</h1>
+  {{ form.email.label }}
+  {{ form.email(class_="form-control", placeholder="Enter email") }}
+
+  {{ form.password.label }}
+  {{ form.password(class_="form-control", placeholder="Password") }}
+
+  {{ form.submit(class_="btn btn-lg btn-primary btn-block") }}
+</form>
+{% endblock %}
