@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
@@ -22,14 +23,15 @@ POSTGRES = {
     'host': 'localhost',
     'port': 5432,
 }
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:%(pw)s@%(host)s:\
-%(port)s/%(db)s' % POSTGRES
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:%(pw)s@%(host)s:\
+# %(port)s/%(db)s' % POSTGRES
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 login = LoginManager(app)
 login.login_view = "login"
-db = SQLAlchemy(app)
-
-migrate = Migrate(app, db)
 
 
 class User(UserMixin, db.Model):
