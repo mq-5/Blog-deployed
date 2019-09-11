@@ -97,7 +97,7 @@ li.post,
 
 .sidebar .nav-link {
   font-weight: 500;
-  color: #333;
+  color: grey;
 }
 
 .sidebar .nav-link .feather {
@@ -118,6 +118,14 @@ li.post,
   font-size: .75rem;
   text-transform: uppercase;
 }
+
+
+#main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 
 .header {
   color: #5a6d79;

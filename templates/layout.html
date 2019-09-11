@@ -17,53 +17,24 @@
   <div class="container-fluid">
     <div class="row">
       {% if current_user.is_authenticated %}
-      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-        <div class="sidebar-sticky">
-          <h3 class="mb-3"> {{ current_user.user_name}} <i class="fa fa-user-circle mr-2" aria-hidden="true"></i></h3>
-          <ul class="nav flex-column">
-
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('profile', id=current_user.id) }}">
-
-                My profile <span class="sr-only">(current)</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('lst', criteria='following') }}">I follow</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('lst', criteria='follower') }}">My followers</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href=""> Edit profile </a>
-            </li>
-            {% if current_user.is_admin %}
-            <div class="dropdown-divider"></div>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('flagged') }}"> Flagged Post <span
-                  class="badge badge-success">Admin</span> </a></li>
-            <li class="nav-item"><a class="nav-link" href="/admin"> Monitor <span
-                  class="badge badge-success">Admin</span> </a></li>
-            {% endif %} <br />
-            <li class="nav-item">
-              <a class="btn btn-info ml-3" href="{{ url_for('upload') }}">New Post</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      {% include 'includes/_sidebar.html' %}
       {% endif %}
-      <div id="content" class="container">
-        {% include 'includes/_flashes.html' %}
-        {% block content %}
-        <h2 class="header my-5">Hello there! Welcome to my blog </h2>
-        <p class="text-center text-muted">{{count}} visits </p>
-        {% endblock %}
+      <div class="col-md-10" id='main-content'>
+        <div id="content" class="container">
+          {% include 'includes/_flashes.html' %}
+          {% block content %}
+          <h2 class="header my-5">Hello there! Welcome to my blog </h2>
+          <p class="text-center text-muted">{{count}} visits </p>
+          {% endblock %}
+        </div>
+        <div id="footer" class="text-center my-5">
+          {% block footer %} &copy; Copyright 2019 by
+          <a href="http://domain.invalid/">me</a>. {% endblock %}
+        </div>
       </div>
     </div>
   </div>
-  <div id="footer" class="text-center my-5">
-    {% block footer %} &copy; Copyright 2019 by
-    <a href="http://domain.invalid/">me</a>. {% endblock %}
-  </div>
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
   </script>

@@ -29,7 +29,7 @@ POSTGRES = {
     'port': 5432,
 }
 '''
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://quyen:123@localhost:5432/blog'
+DATABASE_URL='postgresql://quyen:123@localhost:5432/blog'
 '''
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -192,7 +192,7 @@ def send_simple_message():
 		"https://api.mailgun.net/v3/sandbox0bfc0bbfa16043fab12dda3a391f74dd.mailgun.org/messages",
 		auth=("api", "bac57319741aa8659f9c76a8514b9344-c27bf672-7c55c135"),
 		data={"from": "Excited User <mailgun@sandbox0bfc0bbfa16043fab12dda3a391f74dd.mailgun.org>",
-			"to": ["thaikhoamyquyen@gmail.com", "YOU@sandbox0bfc0bbfa16043fab12dda3a391f74dd.mailgun.org"],
+			"to": ["thaikhoamyquyen@gmail.com"],
 			"subject": "Mailgun Update",
 			"text": "Ten more visits to your site!"})
 
